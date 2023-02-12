@@ -15,7 +15,7 @@ class User extends Authenticatable implements JWTSubject
     use HasFactory;
     use Notifiable;
 
-    /** 
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -29,7 +29,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
     ];
 
-    /** 
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
@@ -41,7 +41,7 @@ class User extends Authenticatable implements JWTSubject
         'oauth_id',
     ];
 
-    /** 
+    /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
@@ -74,7 +74,7 @@ class User extends Authenticatable implements JWTSubject
         };
     }
 
-    /** 
+    /**
      * Scope a query to only include customers.
      *
      * Example: User::isCustomer()->get();
@@ -88,7 +88,7 @@ class User extends Authenticatable implements JWTSubject
         return $query->where('type', '=', 0);
     }
 
-    /** 
+    /**
      * Scope a query to only include sellers.
      *
      * Example: User::isSeller()->get();
@@ -102,7 +102,7 @@ class User extends Authenticatable implements JWTSubject
         return $query->where('type', '=', 1);
     }
 
-    /** 
+    /**
      * Scope a query to only include admins.
      *
      * Example: User::isAdmin()->get();

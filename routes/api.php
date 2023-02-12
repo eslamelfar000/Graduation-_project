@@ -37,7 +37,3 @@ Route::group([
     Route::get('posts',[ProductController::class, 'index']);   
 });
 
-Route::post('/auth/{provider}', [SocialiteController::class, 'redirect']); 
-Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback']); 
-
-

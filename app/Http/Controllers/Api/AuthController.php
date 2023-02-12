@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-   /** 
+   /**
      * Create a new AuthController instance.
      *
      * @return void
@@ -18,7 +18,7 @@ class AuthController extends Controller
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
-    /** 
+    /**
      * Get a JWT via given credentials.
      *
      * @return \Illuminate\Http\JsonResponse
@@ -37,7 +37,7 @@ class AuthController extends Controller
         }
         return $this->createNewToken($token);
     }
-    /** 
+    /**
      * Register a User.
      *
      * @return \Illuminate\Http\JsonResponse
@@ -49,7 +49,7 @@ class AuthController extends Controller
             'first_name' => 'required|string|between:2,100',
             'last_name'  => 'nullable|string|between:2,100',
             'email'      => 'required|string|email|max:100|unique:users',
-            'phone'      => 'required|string|min:6',
+            'phone'      => 'required|string|min:6|unique:users',
             'password'   => 'required|string|confirmed|min:6',
         ]);
         if ($validator->fails()) {
@@ -66,7 +66,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    /** 
+    /**
      * Log the user out (Invalidate the token).
      *
      * @return \Illuminate\Http\JsonResponse
