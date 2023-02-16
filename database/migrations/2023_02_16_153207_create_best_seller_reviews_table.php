@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('best_seller_reviews', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('body');
+            $table->foreignId('product_id')->constrained('best_sellers');
+            $table->string('review');
+            $table->string('star'); 
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('best_seller_reviews');
     }
 };

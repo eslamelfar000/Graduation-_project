@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SocialiteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,22 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/login', function () {
+    return view('login');
+})
+->name('login');
+
+Route::get('/login/{provider}', [SocialiteController::class, 'redirectToProvider'])
+    ->where('provider', 'facebook')
+    ->name('login.oauth')
+    ->middleware('guest');
+
+Route::get('/login/{provider}/callback', [SocialiteController::class, 'handleProviderCallback'])
+    ->where('provider', 'facebook')
+    ->middleware('guest');
+
+Route::get('/dashboard', function () {
+    return auth()->user();
+})
+->name('dashboard');

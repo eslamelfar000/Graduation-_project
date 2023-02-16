@@ -2,9 +2,16 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\TopRatingController;
+use App\Http\Controllers\BestSellerController;
+use App\Http\Controllers\NewProductController;
 use App\Http\Controllers\Api\ProductController;
-use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\BestSellerReviewController;
+use App\Http\Controllers\NewProductReviewController;
+use App\Http\Controllers\TopRatingReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +33,7 @@ Route::group([
 ], function ($router) {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/logout', [AuthController::class, 'logout']);  
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
 // Admins only routes
@@ -34,6 +41,31 @@ Route::group([
     'prefix' => 'admin',
     'middleware' => ['api', 'auth', 'is.admin'],
 ], function () {
-    Route::get('posts',[ProductController::class, 'index']);   
+    Route::get('posts', [ProductController::class, 'index']);
 });
+###########################################################################################
 
+Route::post('/shopStore', [ShopController::class, 'store']);
+Route::get('/shopShow/{id}', [ShopController::class, 'show']);
+
+###########################################################################################
+
+Route::post('/topratingStore', [TopRatingController::class, 'store']);
+Route::get('/topratingShow/{id}', [TopRatingController::class, 'show']);
+
+###########################################################################################
+
+Route::post('/newproductStore', [NewProductController::class, 'store']);
+Route::get('/newproductShow/{id}', [NewProductController::class, 'show']);
+
+###########################################################################################
+
+Route::post('/bestsellerStore', [BestSellerController::class, 'store']);
+Route::get('/bestsellerShow/{id}', [BestSellerController::class, 'show']);
+
+##########################################################################################
+
+Route::post('/review', [ReviewController::class, 'store']);
+Route::post('/bestsellerreview', [BestSellerReviewController::class, 'store']);
+Route::post('/newproductreview', [NewProductReviewController::class, 'store']);
+Route::post('/topratingreview', [TopRatingReviewController::class, 'store']);
