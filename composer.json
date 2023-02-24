@@ -12,6 +12,7 @@
         "laravel/socialite": "^5.6",
         "laravel/tinker": "^2.7",
         "php-open-source-saver/jwt-auth": "^2.0",
+        "spatie/laravel-medialibrary": "^10.7",
         "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {

@@ -11,6 +11,8 @@ use App\Http\Controllers\NewProductController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\BestSellerReviewController;
 use App\Http\Controllers\NewProductReviewController;
+use App\Http\Controllers\RelatedProductController;
+use App\Http\Controllers\RelatedProductReviewController;
 use App\Http\Controllers\TopRatingReviewController;
 
 /*
@@ -37,12 +39,12 @@ Route::group([
 });
 
 // Admins only routes
-Route::group([
-    'prefix' => 'admin',
-    'middleware' => ['api', 'auth', 'is.admin'],
-], function () {
-    Route::get('posts', [ProductController::class, 'index']);
-});
+// Route::group([
+//     'prefix' => 'admin',
+//     'middleware' => ['api', 'auth', 'is.admin'],
+// ], function () {
+//     Route::get('posts', [ProductController::class, 'index']);
+// });
 ###########################################################################################
 
 Route::post('/shopStore', [ShopController::class, 'store']);
@@ -65,7 +67,13 @@ Route::get('/bestsellerShow/{id}', [BestSellerController::class, 'show']);
 
 ##########################################################################################
 
+Route::post('/relatedproductStore', [RelatedProductController::class, 'store']);
+Route::get('/relatedproductShow/{id}', [RelatedProductController::class, 'show']);
+
+##########################################################################################
+
 Route::post('/review', [ReviewController::class, 'store']);
 Route::post('/bestsellerreview', [BestSellerReviewController::class, 'store']);
 Route::post('/newproductreview', [NewProductReviewController::class, 'store']);
 Route::post('/topratingreview', [TopRatingReviewController::class, 'store']);
+Route::post('/relatedproductreview', [RelatedProductReviewController::class, 'store']);
