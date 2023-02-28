@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
 use App\Models\NewProduct;
 use App\Traits\MediaTrait;
 use Illuminate\Http\Request;
@@ -36,13 +37,12 @@ class NewProductController extends Controller
         ]);
 
         if ($validator->fails()) {
-
             return response()->json($validator->errors(), 422);
         }
 
         // $videos = $request->videos->store('/public/newproducts/');
 
-        $product= new NewProduct;
+        $product = new NewProduct();
         $product->title = $request->title;
         $product->newPrice = $request->newPrice;
         $product->oldPrice = $request->oldPrice;
@@ -57,56 +57,34 @@ class NewProductController extends Controller
         $product->description = $request->description;
         // $product->videos = $request->videos->hashName();
         $product->videos = $request->videos;
-        $result= $product->save();
+        $result = $product->save();
 
         $this->handleRequestMediaFiles($product, $request);
 
-        $product->load('media');
+        // get the newly created product with media images and reviews count
 
-        $product->image_1 = [
-            'large' => $product?->getFirstMediaUrl('image', 'large'),
-            'medium' => $product?->getFirstMediaUrl('image', 'medium'),
-            'small' => $product?->getFirstMediaUrl('image', 'small'),
-        ];
+        $product = NewProduct::with('media')
+            ->withCount('reviews')
+            ->findOrFail($product->id);
 
-        for ($i = 2; $i <= 6; $i++) {
-            $media = $product?->getFirstMedia('images', ['form_key' => 'image_' . $i]);
-            $product->{'image_' . $i} = [
-                'large' => $media?->getUrl('large'),
-                'medium' => $media?->getUrl('medium'),
-                'small' => $media?->getUrl('small'),
-            ];
-        }
-
-        $product->makeHidden('media');
-
-        return response($product,200,["add successfully"]);
+        return new ProductResource($product);
     }
+
     public function show($id)
     {
-        $product = NewProduct::findOrFail($id);
+        // get the product with media images and reviews count
+        $product = NewProduct::with('media')
+            ->withCount('reviews')
+            ->findOrFail($id);
 
-        $product->load('media');
-
-        $product->image_1 = [
-            'large' => $product?->getFirstMediaUrl('image', 'large'),
-            'medium' => $product?->getFirstMediaUrl('image', 'medium'),
-            'small' => $product?->getFirstMediaUrl('image', 'small'),
-        ];
-
-        for ($i = 2; $i <= 6; $i++) {
-            $media = $product?->getFirstMedia('images', ['form_key' => 'image_' . $i]);
-            $product->{'image_' . $i} = [
-                'large' => $media?->getUrl('large'),
-                'medium' => $media?->getUrl('medium'),
-                'small' => $media?->getUrl('small'),
-            ];
+        return new ProductResource($product);
+    }
+    public function index(){
+        $products= ProductResource::collection(NewProduct::with('media')->withCount('reviews')->get());
+        $productResource= [];
+        foreach ($products as $product) {
+            $productResource[]= new ProductResource($product);
         }
-
-        $product->makeHidden('media');
-
-        return response()->json([ 
-            $product,$product->reviews->count(),
-        ]);
+        return  $productResource;
     }
 }
