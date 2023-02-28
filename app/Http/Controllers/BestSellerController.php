@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BestSeller;
+use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 use App\Traits\MediaTrait;
 use Illuminate\Support\Facades\Validator;
@@ -57,51 +58,27 @@ class BestSellerController extends Controller
 
         $this->handleRequestMediaFiles($product, $request);
 
-        $product->load('media');
+        $product = BestSeller::with('media')
+        ->withCount('reviews')
+        ->findOrFail($product->id);
 
-        $product->image_1 = [
-            'large' => $product?->getFirstMediaUrl('image', 'large'),
-            'medium' => $product?->getFirstMediaUrl('image', 'medium'),
-            'small' => $product?->getFirstMediaUrl('image', 'small'),
-        ];
+        return new ProductResource($product);
 
-        for ($i = 2; $i <= 6; $i++) {
-            $media = $product?->getFirstMedia('images', ['form_key' => 'image_' . $i]);
-            $product->{'image_' . $i} = [
-                'large' => $media?->getUrl('large'),
-                'medium' => $media?->getUrl('medium'),
-                'small' => $media?->getUrl('small'),
-            ];
-        }
-
-        $product->makeHidden('media');
-
-        return response($product,200,["add successfully"]);
-    }
+    }  
    
     public function show($id){
-        $product = BestSeller::find($id);
-        $product->load('media');
+        $product = BestSeller::with('media')
+        ->withCount('reviews')
+        ->findOrFail($id);
 
-        $product->image_1 = [
-            'large' => $product?->getFirstMediaUrl('image', 'large'),
-            'medium' => $product?->getFirstMediaUrl('image', 'medium'),
-            'small' => $product?->getFirstMediaUrl('image', 'small'),
-        ];
-
-        for ($i = 2; $i <= 6; $i++) {
-            $media = $product?->getFirstMedia('images', ['form_key' => 'image_' . $i]);
-            $product->{'image_' . $i} = [
-                'large' => $media?->getUrl('large'),
-                'medium' => $media?->getUrl('medium'),
-                'small' => $media?->getUrl('small'),
-            ];
+    return new ProductResource($product);
+    }
+    public function index(){
+        $products= ProductResource::collection(BestSeller::with('media')->withCount('reviews')->get());
+        $productResource= [];
+        foreach ($products as $product) {
+            $productResource[]= new ProductResource($product);
         }
-
-        $product->makeHidden('media');
-         return response()->json([ 
-            $product,$product->reviews->count(), 
-        
-         ]);
-        }
+        return  $productResource;
+    }
 }
