@@ -69,10 +69,9 @@ class ProductResource extends JsonResource
                     $images = [];
 
                     if ($this->hasMedia('image')) {
-                        $images[] = [
-                            'name' => 'image_1',                            
-                            $this?->getFirstMediaUrl('image'),
-                        ];
+                        $images[] = 
+                            $this?->getFirstMediaUrl('image');
+                        
                         for ($i = 2; $i <= 6; $i++) {
                             $media = $this?->getFirstMedia('images', ['form_key' => 'image_' . $i]);
     
