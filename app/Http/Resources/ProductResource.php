@@ -22,7 +22,7 @@ class ProductResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'products' => [
+            'product' => [
             'id'=>  $this->id,
             'title' => $this->title,
             'newPrice' => $this->newPrice,
