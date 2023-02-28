@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TopRating;
+use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 use App\Traits\MediaTrait;
 use Illuminate\Support\Facades\Validator;
@@ -23,7 +24,7 @@ class TopRatingController extends Controller
             'size'    => 'required',
             'abstract'    => 'required',
             'featuer'    => 'required',
-            'pin_code'    => 'required|max:3|unique:top_ratings ',
+            'pin_code'    => 'required|max:3|unique:top_ratings',
             'description'    => 'required',
             'videos'    => 'required',
 
@@ -56,53 +57,30 @@ class TopRatingController extends Controller
         $result= $product->save();
 
         $this->handleRequestMediaFiles($product, $request);
+        $product = TopRating::with('media')
+        ->withCount('reviews')
+        ->findOrFail($product->id);
 
-        $product->load('media');
-
-        $product->image_1 = [
-            'large' => $product?->getFirstMediaUrl('image', 'large'),
-            'medium' => $product?->getFirstMediaUrl('image', 'medium'),
-            'small' => $product?->getFirstMediaUrl('image', 'small'),
-        ];
-
-        for ($i = 2; $i <= 6; $i++) {
-            $media = $product?->getFirstMedia('images', ['form_key' => 'image_' . $i]);
-            $product->{'image_' . $i} = [
-                'large' => $media?->getUrl('large'),
-                'medium' => $media?->getUrl('medium'),
-                'small' => $media?->getUrl('small'),
-            ];
-        }
-
-        $product->makeHidden('media');
-
-
-        return response($product,200,["add successfully"]);
+    return new ProductResource($product);
     }
-    public function show($id){
-        $product = TopRating::findOrFail($id);
-        $product->load('media');
 
-        $product->image_1 = [
-            'large' => $product?->getFirstMediaUrl('image', 'large'),
-            'medium' => $product?->getFirstMediaUrl('image', 'medium'),
-            'small' => $product?->getFirstMediaUrl('image', 'small'),
-        ];
+    public function show($id)
+    {
+        // get the product with media images and reviews count
+        $product = TopRating::with('media')
+            ->withCount('reviews')
+            ->findOrFail($id);
 
-        for ($i = 2; $i <= 6; $i++) {
-            $media = $product?->getFirstMedia('images', ['form_key' => 'image_' . $i]);
-            $product->{'image_' . $i} = [
-                'large' => $media?->getUrl('large'),
-                'medium' => $media?->getUrl('medium'),
-                'small' => $media?->getUrl('small'),
-            ];
+        //return response()->json( new ProductResource($product));
+        return new ProductResource($product);
+    }
+    public function index(){
+        $products= ProductResource::collection(TopRating::with('media')->withCount('reviews')->get());
+        $productResource= [];
+        foreach ($products as $product) {
+            $productResource[]= new ProductResource($product);
         }
-
-        $product->makeHidden('media');
-
-         return response()->json([ 
-            $product,$product->reviews->count(),  
-          
-         ]);
-        }
+        return  $productResource;
+    }
+    
 }
