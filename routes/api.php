@@ -48,26 +48,31 @@ Route::group([
 ###########################################################################################
 
 Route::post('/shopStore', [ShopController::class, 'store']);
+Route::get('/shopproducts', [ShopController::class, 'index']);
 Route::get('/shopShow/{id}', [ShopController::class, 'show']);
 
 ###########################################################################################
 
 Route::post('/topratingStore', [TopRatingController::class, 'store']);
+Route::get('/topratingproducts', [TopRatingController::class, 'index']);
 Route::get('/topratingShow/{id}', [TopRatingController::class, 'show']);
 
 ###########################################################################################
 
 Route::post('/newproductStore', [NewProductController::class, 'store']);
+Route::get('/newproductproducts', [NewProductController::class, 'index']);
 Route::get('/newproductShow/{id}', [NewProductController::class, 'show']);
 
 ###########################################################################################
 
 Route::post('/bestsellerStore', [BestSellerController::class, 'store']);
+Route::get('/bestsellerproducts', [BestSellerController::class, 'index']);
 Route::get('/bestsellerShow/{id}', [BestSellerController::class, 'show']);
 
 ##########################################################################################
 
 Route::post('/relatedproductStore', [RelatedProductController::class, 'store']);
+Route::get('/relatedproducts', [RelatedProductController::class, 'index']);
 Route::get('/relatedproductShow/{id}', [RelatedProductController::class, 'show']);
 
 ##########################################################################################
