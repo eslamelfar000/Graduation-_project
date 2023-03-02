@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
 use App\Models\RelatedProduct;
 use App\Traits\MediaTrait;
 use Illuminate\Http\Request;
@@ -27,20 +28,13 @@ class RelatedProductController extends Controller
             'pin_code'    => 'required|max:3|unique:related_products',
             'description'    => 'required',
             'videos'    => 'required',
-            
-            'image_1'    => 'sometimes|file|image|mimes:jpg,gif,png,webp',
-            'image_2'    => 'sometimes|file|image|mimes:jpg,gif,png,webp',
-            'image_3'    => 'sometimes|file|image|mimes:jpg,gif,png,webp',
-            'image_4'    => 'sometimes|file|image|mimes:jpg,gif,png,webp',
-            'image_5'    => 'sometimes|file|image|mimes:jpg,gif,png,webp',
-            'image_6'    => 'sometimes|file|image|mimes:jpg,gif,png,webp',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $product= new RelatedProduct;
+        $product = new RelatedProduct();
         $product->title = $request->title;
         $product->newPrice = $request->newPrice;
         $product->oldPrice = $request->oldPrice;
@@ -55,57 +49,35 @@ class RelatedProductController extends Controller
         $product->description = $request->description;
         $product->videos = $request->videos;
 
-        $result= $product->save();
+        $result = $product->save();
 
         $this->handleRequestMediaFiles($product, $request);
 
-        $product->load('media');
+        // get the newly created product with media images and reviews count
 
-        $product->image_1 = [
-            'large' => $product?->getFirstMediaUrl('image', 'large'),
-            'medium' => $product?->getFirstMediaUrl('image', 'medium'),
-            'small' => $product?->getFirstMediaUrl('image', 'small'),
-        ];
+        $product = RelatedProduct::with('media')
+            ->withCount('reviews')
+            ->findOrFail($product->id);
 
-        for ($i = 2; $i <= 6; $i++) {
-            $media = $product?->getFirstMedia('images', ['form_key' => 'image_' . $i]);
-            $product->{'image_' . $i} = [
-                'large' => $media?->getUrl('large'),
-                'medium' => $media?->getUrl('medium'),
-                'small' => $media?->getUrl('small'),
-            ];
-        }
-
-        $product->makeHidden('media');
-
-        return response($product,200,["add successfully"]);
+        return new ProductResource($product);
     }
 
     public function show($id)
     {
-        $product = RelatedProduct::findOrFail($id);
+        // get the product with media images and reviews count
+        $product = RelatedProduct::with('media')
+            ->withCount('reviews')
+            ->findOrFail($id);
 
-        $product->load('media');
+        return new ProductResource($product);
+    }
 
-        $product->image_1 = [
-            'large' => $product?->getFirstMediaUrl('image', 'large'),
-            'medium' => $product?->getFirstMediaUrl('image', 'medium'),
-            'small' => $product?->getFirstMediaUrl('image', 'small'),
-        ];
-
-        for ($i = 2; $i <= 6; $i++) {
-            $media = $product?->getFirstMedia('images', ['form_key' => 'image_' . $i]);
-            $product->{'image_' . $i} = [
-                'large' => $media?->getUrl('large'),
-                'medium' => $media?->getUrl('medium'),
-                'small' => $media?->getUrl('small'),
-            ];
+    public function index(){
+        $products= ProductResource::collection(RelatedProduct::with('media')->withCount('reviews')->get());
+        $productResource= [];
+        foreach ($products as $product) {
+            $productResource[]= new ProductResource($product);
         }
-
-        $product->makeHidden('media');
-
-        return response()->json([ 
-            $product,$product->reviews->count(),
-        ]);
+        return  $productResource;
     }
 }

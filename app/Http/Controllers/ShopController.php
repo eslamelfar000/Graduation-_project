@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shop;
+use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 use App\Traits\MediaTrait;
 use Illuminate\Support\Facades\Validator;
@@ -58,52 +59,29 @@ class ShopController extends Controller
 
         $this->handleRequestMediaFiles($product, $request);
 
-        $product->load('media');
+        $product = Shop::with('media')
+        ->withCount('reviews')
+        ->findOrFail($product->id);
 
-        $product->image_1 = [
-            'large' => $product?->getFirstMediaUrl('image', 'large'),
-            'medium' => $product?->getFirstMediaUrl('image', 'medium'),
-            'small' => $product?->getFirstMediaUrl('image', 'small'),
-        ];
-
-        for ($i = 2; $i <= 6; $i++) {
-            $media = $product?->getFirstMedia('images', ['form_key' => 'image_' . $i]);
-            $product->{'image_' . $i} = [
-                'large' => $media?->getUrl('large'),
-                'medium' => $media?->getUrl('medium'),
-                'small' => $media?->getUrl('small'),
-            ];
-        }
-
-        $product->makeHidden('media');
-
-        return response($product,200,["add successfully"]);
+    return new ProductResource($product);
     }
-    public function show($id){
-        $product = Shop::findOrFail($id);
-        $product->load('media');
+    
+    public function show($id)
+    {
+        // get the product with media images and reviews count
+        $product = Shop::with('media')
+            ->withCount('reviews')
+            ->findOrFail($id);
 
-        $product->image_1 = [
-            'large' => $product?->getFirstMediaUrl('image', 'large'),
-            'medium' => $product?->getFirstMediaUrl('image', 'medium'),
-            'small' => $product?->getFirstMediaUrl('image', 'small'),
-        ];
+        return new ProductResource($product);
+    }
 
-        for ($i = 2; $i <= 6; $i++) {
-            $media = $product?->getFirstMedia('images', ['form_key' => 'image_' . $i]);
-            $product->{'image_' . $i} = [
-                'large' => $media?->getUrl('large'),
-                'medium' => $media?->getUrl('medium'),
-                'small' => $media?->getUrl('small'),
-            ];
+    public function index(){
+        $products= ProductResource::collection(Shop::with('media')->withCount('reviews')->get());
+        $productResource= [];
+        foreach ($products as $product) {
+            $productResource[]= new ProductResource($product);
         }
-
-        $product->makeHidden('media');
-
-         return response()->json([ 
-            $product,$product->reviews->count(), 
-        
-         ]);
-        }
+        return  $productResource;
+    }
 }
-
