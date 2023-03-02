@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SpecialPiece_Review;
+use App\Models\SpecialPieceReview;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -20,7 +20,7 @@ class SpecialPieceReviewController extends Controller
 
             return response()->json($validator->errors(), 422);
         }
-        $review= new SpecialPiece_Review;
+        $review= new SpecialPieceReview;
         $review->product_id = $request->product_id;
         $review->review = $request->review;
         $review->star = $request->star;
