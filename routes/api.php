@@ -14,6 +14,8 @@ use App\Http\Controllers\NewProductReviewController;
 use App\Http\Controllers\RelatedProductController;
 use App\Http\Controllers\RelatedProductReviewController;
 use App\Http\Controllers\TopRatingReviewController;
+use App\Http\Controllers\SpecialPieceController;
+use App\Http\Controllers\SpecialPieceReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,27 +50,38 @@ Route::group([
 ###########################################################################################
 
 Route::post('/shopStore', [ShopController::class, 'store']);
+Route::get('/shopproducts', [ShopController::class, 'index']);
 Route::get('/shopShow/{id}', [ShopController::class, 'show']);
 
 ###########################################################################################
 
 Route::post('/topratingStore', [TopRatingController::class, 'store']);
+Route::get('/topratingproducts', [TopRatingController::class, 'index']);
 Route::get('/topratingShow/{id}', [TopRatingController::class, 'show']);
 
 ###########################################################################################
 
 Route::post('/newproductStore', [NewProductController::class, 'store']);
+Route::get('/newproductproducts', [NewProductController::class, 'index']);
 Route::get('/newproductShow/{id}', [NewProductController::class, 'show']);
 
 ###########################################################################################
 
 Route::post('/bestsellerStore', [BestSellerController::class, 'store']);
+Route::get('/bestsellerproducts', [BestSellerController::class, 'index']);
 Route::get('/bestsellerShow/{id}', [BestSellerController::class, 'show']);
 
 ##########################################################################################
 
 Route::post('/relatedproductStore', [RelatedProductController::class, 'store']);
+Route::get('/relatedproducts', [RelatedProductController::class, 'index']);
 Route::get('/relatedproductShow/{id}', [RelatedProductController::class, 'show']);
+
+##########################################################################################
+
+Route::post('/specialpieceStore', [SpecialPieceController::class, 'store']);
+Route::get('/specialpieces', [SpecialPieceController::class, 'index']);
+Route::get('/specialpieceShow/{id}', [SpecialPieceController::class, 'show']);
 
 ##########################################################################################
 
@@ -77,3 +90,4 @@ Route::post('/bestsellerreview', [BestSellerReviewController::class, 'store']);
 Route::post('/newproductreview', [NewProductReviewController::class, 'store']);
 Route::post('/topratingreview', [TopRatingReviewController::class, 'store']);
 Route::post('/relatedproductreview', [RelatedProductReviewController::class, 'store']);
+Route::post('/specialpiecereview', [SpecialPieceReviewController::class, 'store']);
