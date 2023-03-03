@@ -31,9 +31,9 @@ class ProductResource extends JsonResource
             'reviews_count' => $this->reviews_count,
 
             'details' => [
-                'category' => $this->category,
+                #'category' => $this->category,
                 'abstract' => $this->abstract,
-                'featuer' => $this->featuer,
+                #'featuer' => $this->featuer,
                 'pin_code' => $this->pin_code,
                 'description' => $this->description,
                 'videos' => $this->videos,
