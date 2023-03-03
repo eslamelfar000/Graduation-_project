@@ -60,7 +60,7 @@ class ProductResource extends JsonResource
                         ->values();
                 }, null),
                 
-                 'categorys' => $this->when($this->category, function () {
+                 'categories' => $this->when($this->category, function () {
                     return collect(explode(',', $this->category))
                         ->filter(fn ($item) => trim($item))
                         ->map(fn ($item) => ucfirst(trim($item)))
