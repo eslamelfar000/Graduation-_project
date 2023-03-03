@@ -59,6 +59,20 @@ class ProductResource extends JsonResource
                         ->map(fn ($item) => ucfirst(trim($item)))
                         ->values();
                 }, null),
+                
+                 'categorys' => $this->when($this->category, function () {
+                    return collect(explode(',', $this->category))
+                        ->filter(fn ($item) => trim($item))
+                        ->map(fn ($item) => ucfirst(trim($item)))
+                        ->values();
+                }, null),
+
+                'featuers' => $this->when($this->featuer, function () {
+                    return collect(explode(',', $this->featuer))
+                        ->filter(fn ($item) => trim($item))
+                        ->map(fn ($item) => ucfirst(trim($item)))
+                        ->values();
+                }, null),
                 'sizes' => $this->when($this->size, function () {
                     return collect(explode(',', $this->size))
                         ->filter(fn ($item) => trim($item))
