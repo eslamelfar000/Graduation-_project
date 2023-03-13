@@ -27,6 +27,9 @@ class ProductController extends Controller
             'pin_code'    => 'required|max:3|unique:products',
             'description'    => 'required',
             'videos'    => 'required',
+            'is_special'=> 'required',
+            'is_complete'=> 'required',
+
 
             'image_1'    => 'sometimes|file|image|mimes:jpg,gif,png,webp',
             'image_2'    => 'sometimes|file|image|mimes:jpg,gif,png,webp',
@@ -81,8 +84,14 @@ class ProductController extends Controller
                     ->having('rating', '>', 0)
                     ->orderBy('rating', 'DESC');
             })
+            ->when($request->query('is_special'), function ($query) {
+                $query
+                    ->where('is_special', '=', 1);                  
+            })
             ->get();
 
         return ProductResource::collection($products);
     }
+
+    
 }
