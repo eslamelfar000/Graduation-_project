@@ -16,7 +16,7 @@ class Product extends Model implements HasMedia
     use InteractsWithMedia;
 
     protected $fillable = [
-        'title','newPrice','oldPrice','offer','category','color','size'  , 'abstract','featuer','pin_code','description','videos'
+        'title','newPrice','oldPrice','offer','category','color','size'  , 'abstract','featuer','pin_code','description','videos','is_complete','is_special'
     ];
 
     public function reviews()
